@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Rooftop Gambling</title>
+<title>Rooftop Gambling — Card UI</title>
 <style>
   :root{
     --bg:#0b1020; --card:#0f1530; --card2:#171f47; --accent:#ffb703;
@@ -82,9 +82,30 @@
   .cell.revealed{background:linear-gradient(180deg,#1d2a66,#132054)}
   .cell.bomb{background:linear-gradient(180deg,#6c1f2c,#4c1520); border-color:#812535}
 
-  /* Dice */
-  #diceFaces{font-size:46px; letter-spacing:8px; text-shadow:0 0 18px rgba(56,189,248,.25)}
-  .under{color:#72f5ff} .over{color:#b17dff}
+  /* Fancy playing cards */
+  .table{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .pc{
+    width:70px; height:100px; border-radius:10px; border:1px solid #17245e;
+    background:linear-gradient(160deg,#0f1738,#142057);
+    display:flex; align-items:center; justify-content:center; position:relative;
+    box-shadow:0 8px 18px rgba(0,0,0,.35), inset 0 0 18px rgba(56,189,248,.08);
+    font-weight:900; font-size:28px;
+  }
+  .pc .corner{
+    position:absolute; left:6px; top:4px; font-size:13px; text-align:center; line-height:1.1; opacity:.95
+  }
+  .pc .corner.bottom{ left:auto; top:auto; right:6px; bottom:4px; transform:rotate(180deg) }
+  .pc.red{ color:#ff6b8b }
+  .pc.black{ color:#e9f1ff }
+  .pc.back{ background:repeating-linear-gradient(45deg,#101946 0 8px,#0c1435 8px 16px); }
+  .pile{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; min-height:108px }
+
+  /* Dice prettier */
+  #diceFaces{display:flex; gap:12px; justify-content:center}
+  .die{
+    width:58px; height:58px; background:linear-gradient(145deg,#152054,#0f1738); border:1px solid #0d1333; border-radius:12px;
+    display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 8px 18px rgba(0,0,0,.35);
+  }
 
   /* Crash */
   #crashMult{font-size:56px; font-weight:900; margin:8px 0; text-shadow:0 0 22px rgba(122,255,154,.18)}
@@ -97,7 +118,7 @@
   #wheelCanvas{width:280px; height:280px; filter:drop-shadow(0 10px 24px rgba(0,0,0,.4))}
   .pointer{width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:18px solid var(--accent); margin-top:-8px; filter:drop-shadow(0 6px 12px rgba(255,183,3,.4))}
 
-  /* Coinflip (card flip) */
+  /* Coinflip */
   .coin{
     width:120px;height:120px;border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff6, transparent 35%), linear-gradient(145deg,#1f2b62,#0f1738);
     display:flex; align-items:center; justify-content:center; font-size:44px; border:1px solid #122055;
@@ -108,13 +129,27 @@
   .star{color:#ffd166; text-shadow:0 0 14px rgba(255,209,102,.45)}
   .heart{color:#ff6b8b; text-shadow:0 0 14px rgba(255,107,139,.45)}
 
+  /* Slots reels */
+  .reels{display:flex; gap:12px; justify-content:center}
+  .reel{
+    width:90px; height:90px; border-radius:14px; border:1px solid #0e1739;
+    background:linear-gradient(160deg,#0f1738,#15245f);
+    font-size:46px; display:flex; align-items:center; justify-content:center;
+    box-shadow:inset 0 0 18px rgba(56,189,248,.1), 0 8px 18px rgba(0,0,0,.35);
+  }
+
+  /* Plinko cells */
+  #pl_board .cellp{
+    width:28px; height:28px; border:1px solid #0f1638; border-radius:6px; background:#0e1739;
+  }
+  #pl_board .cellp.active{ background:linear-gradient(145deg,#38bdf8,#7aff9a) }
+
   /* Tower */
   .tower{display:flex; flex-direction:column; gap:10px; align-items:center; margin-top:12px}
   .towerRow{display:flex; gap:10px}
   .tw{width:90px;height:56px;border-radius:10px;border:1px solid #0d1333;background:linear-gradient(180deg,#152054,#0f1738);display:flex;align-items:center;justify-content:center;cursor:pointer; font-size:20px; box-shadow:0 6px 16px rgba(0,0,0,.35)}
   .tw.safe{background:linear-gradient(180deg,#203173,#17245e)}
   .tw.bmb{background:linear-gradient(180deg,#6c1f2c,#4c1520)}
-  .levelTag{font-size:12px; opacity:.8}
 
   /* Toast */
   #toast{
@@ -141,17 +176,20 @@
       <a href="#" data-view="wheelView">🎡 Roulette</a>
       <a href="#" data-view="limboView">⚡ Limbo</a>
       <a href="#" data-view="towerView">🏰 Tower</a>
+      <a href="#" data-view="bjView">🃏 Blackjack</a>
+      <a href="#" data-view="slotsView">🎰 Slots</a>
+      <a href="#" data-view="plinkoView">🔻 Plinko</a>
       <a href="#" data-view="codesView">🔑 Coduri</a>
     </nav>
     <p class="muted" style="margin-top:10px;font-size:12px">
-      Hawk Tuah.
+      Fun only. Fără bani reali.
     </p>
   </aside>
 
   <!-- MAIN -->
   <main class="main">
     <header>
-      <h1>Rooftop Gambling</h1>
+      <h1>Rooftop Gambling — Card UI</h1>
       <div class="pill">Balance: <b class="good" id="topBalance">0</b> 🪙</div>
     </header>
 
@@ -161,12 +199,15 @@
     <section id="homeView">
       <div class="grid">
         <div class="card"><h3>💣 Mines</h3><p class="muted">Pariu + nr. bombe. Deschizi celule & dai cashout.</p><button class="cta" data-view="minesView">Joacă</button></div>
-        <div class="card"><h3>🎲 Dice</h3><p class="muted">Under/Over pe suma a 2 zaruri. Payout corect (distribuție 2–12).</p><button class="cta" data-view="diceView">Joacă</button></div>
-        <div class="card"><h3>🚀 Crash</h3><p class="muted">Urcă multiplicatorul. Cashout înainte să „crape”.</p><button class="cta" data-view="crashView">Joacă</button></div>
-        <div class="card"><h3>⭐/❤️ Coinflip</h3><p class="muted">Alege ⭐ sau ❤️. Flip 3D. Payout 1.98×.</p><button class="cta" data-view="coinView">Joacă</button></div>
-        <div class="card"><h3>🎡 Roulette</h3><p class="muted">Roată reală pe canvas: Red/Blue 2×, Green 14×.</p><button class="cta" data-view="wheelView">Joacă</button></div>
-        <div class="card"><h3>⚡ Limbo</h3><p class="muted">Țintă (1.10–10×). Win dacă roll ≥ țintă.</p><button class="cta" data-view="limboView">Joacă</button></div>
-        <div class="card"><h3>🏰 Tower</h3><p class="muted">3 cărămizi/level (🧱). Una e bombă 💣. Urcă & retrage.</p><button class="cta" data-view="towerView">Joacă</button></div>
+        <div class="card"><h3>🎲 Dice</h3><p class="muted">Under/Over pe suma a 2 zaruri.</p><button class="cta" data-view="diceView">Joacă</button></div>
+        <div class="card"><h3>🚀 Crash</h3><p class="muted">Cashout înainte să „crape”.</p><button class="cta" data-view="crashView">Joacă</button></div>
+        <div class="card"><h3>⭐/❤️ Coinflip</h3><p class="muted">Alege ⭐ sau ❤️.</p><button class="cta" data-view="coinView">Joacă</button></div>
+        <div class="card"><h3>🎡 Roulette</h3><p class="muted">Red/Blue 2×, Green 14×.</p><button class="cta" data-view="wheelView">Joacă</button></div>
+        <div class="card"><h3>⚡ Limbo</h3><p class="muted">Țintă (1.10–10×).</p><button class="cta" data-view="limboView">Joacă</button></div>
+        <div class="card"><h3>🏰 Tower</h3><p class="muted">3 cărămizi/level. 1 bombă.</p><button class="cta" data-view="towerView">Joacă</button></div>
+        <div class="card"><h3>🃏 Blackjack</h3><p class="muted">21 vs dealer. Hărți vizuale.</p><button class="cta" data-view="bjView">Joacă</button></div>
+        <div class="card"><h3>🎰 Slots</h3><p class="muted">Reels mari cu animație.</p><button class="cta" data-view="slotsView">Joacă</button></div>
+        <div class="card"><h3>🔻 Plinko</h3><p class="muted">Biluță pe board 9×8.</p><button class="cta" data-view="plinkoView">Joacă</button></div>
       </div>
     </section>
 
@@ -191,7 +232,7 @@
       </div>
     </section>
 
-    <!-- DICE (2 dice, sum 2..12) -->
+    <!-- DICE -->
     <section id="diceView" style="display:none">
       <div class="card">
         <h2>🎲 Dice</h2>
@@ -206,7 +247,10 @@
           <span class="stat">Șansă: <b id="d_chance">—</b>%</span>
           <span class="stat">Payout potențial: <b id="d_payout">—</b> 🪙</span>
         </div>
-        <div id="diceFaces">— —</div>
+        <div id="diceFaces">
+          <div id="dieA" class="die">⚄</div>
+          <div id="dieB" class="die">⚂</div>
+        </div>
         <div id="d_result" class="muted"></div>
       </div>
     </section>
@@ -227,7 +271,7 @@
       </div>
     </section>
 
-    <!-- COINFLIP (⭐ vs ❤️) -->
+    <!-- COINFLIP -->
     <section id="coinView" style="display:none">
       <div class="card">
         <h2>⭐/❤️ Coinflip</h2>
@@ -245,11 +289,11 @@
       </div>
     </section>
 
-    <!-- WHEEL (roulette canvas) -->
+    <!-- WHEEL -->
     <section id="wheelView" style="display:none">
       <div class="card">
         <h2>🎡 Roulette</h2>
-        <p class="muted">Red/Blue plătește <b>2×</b>, Green plătește <b>14×</b>.</p>
+        <p class="muted">Red/Blue 2×, Green 14×.</p>
         <div class="row">
           <label>Pariu: <input type="number" id="wh_bet" min="1" value="100"></label>
           <select id="wh_pick">
@@ -272,7 +316,6 @@
     <section id="limboView" style="display:none">
       <div class="card">
         <h2>⚡ Limbo</h2>
-        <p class="muted">Țintă (1.10–10×). Win dacă roll ≥ țintă. Payout ~ 0.97 × țintă.</p>
         <div class="row">
           <label>Pariu: <input type="number" id="lb_bet" min="1" value="100"></label>
           <label>Țintă ×: <input type="number" id="lb_target" step="0.01" min="1.1" max="10" value="2.00"></label>
@@ -285,11 +328,10 @@
       </div>
     </section>
 
-    <!-- TOWER (FIXED) -->
+    <!-- TOWER -->
     <section id="towerView" style="display:none">
       <div class="card">
         <h2>🏰 Tower</h2>
-        <p class="muted">8 niveluri. La fiecare nivel ai 3 cărămizi 🧱 (1 bombă 💣). Urcă și poți retrage oricând.</p>
         <div class="row">
           <label>Pariu: <input type="number" id="tw_bet" min="1" value="100"></label>
           <button id="tw_start">Start</button>
@@ -306,11 +348,78 @@
       </div>
     </section>
 
+    <!-- BLACKJACK -->
+    <section id="bjView" style="display:none">
+      <div class="card">
+        <h2>🃏 Blackjack</h2>
+        <div class="row">
+          <label>Pariu: <input type="number" id="bj_bet" min="1" value="100"></label>
+          <button id="bj_deal">Deal</button>
+          <button id="bj_hit" class="secondary" disabled>Hit</button>
+          <button id="bj_stand" class="secondary" disabled>Stand</button>
+        </div>
+        <div class="spacer"></div>
+        <div class="stat">Status: <b id="bj_status">—</b></div>
+        <div class="spacer"></div>
+        <div class="row" style="gap:20px">
+          <div>
+            <h3 style="margin:0 0 6px">Tu</h3>
+            <div id="bj_pile" class="pile"></div>
+            <div class="stat">Total: <b id="bj_pt">0</b></div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px">Dealer</h3>
+            <div id="bj_dpile" class="pile"></div>
+            <div class="stat">Total: <b id="bj_dt">0</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLOTS -->
+    <section id="slotsView" style="display:none">
+      <div class="card">
+        <h2>🎰 Slots</h2>
+        <div class="row">
+          <label>Pariu: <input type="number" id="sl_bet" min="1" value="100"></label>
+          <button id="sl_spin">Spin</button>
+        </div>
+        <div class="spacer"></div>
+        <div class="reels">
+          <div id="sl_r1" class="reel">—</div>
+          <div id="sl_r2" class="reel">—</div>
+          <div id="sl_r3" class="reel">—</div>
+        </div>
+        <div id="sl_msg" class="muted" style="text-align:center;margin-top:8px"></div>
+        <div class="spacer"></div>
+        <div class="muted" style="font-size:14px">
+          Plăți: 7️⃣7️⃣7️⃣ = 15× · 🔔🔔🔔 = 8× · ⭐⭐⭐ = 6× · 🍒🍒🍒 = 4× · Două la fel = 1.5×
+        </div>
+      </div>
+    </section>
+
+    <!-- PLINKO -->
+    <section id="plinkoView" style="display:none">
+      <div class="card">
+        <h2>🔻 Plinko</h2>
+        <p class="muted">Board 9 coloane. Biluța cade 8 rânduri.</p>
+        <div class="row">
+          <label>Pariu: <input type="number" id="pl_bet" min="1" value="100"></label>
+          <button id="pl_drop">Drop</button>
+        </div>
+        <div class="spacer"></div>
+        <div class="stat">Slot: <b id="pl_slot">—</b></div>
+        <div class="stat">Multiplicator: <b id="pl_mult">—</b></div>
+        <div id="pl_msg" class="muted" style="margin-top:8px"></div>
+        <div class="spacer"></div>
+        <div id="pl_board" style="display:grid;grid-template-columns:repeat(9,28px);gap:6px;justify-content:center"></div>
+      </div>
+    </section>
+
     <!-- CODES -->
     <section id="codesView" style="display:none">
       <div class="card">
         <h2>🔑 Coduri Gobuxi</h2>
-        <p class="muted">Introdu un cod (o singură dată / device).</p>
         <div class="row">
           <input type="text" id="codeInput" placeholder="ex: makeitrain" />
           <button id="codeRedeem">Activează codul</button>
@@ -325,7 +434,7 @@
 
 <script>
 /* =================== CORE STATE =================== */
-const BALANCE_KEY = "gobuxiBalance_aesthetic_v1";
+const BALANCE_KEY = "gobuxiBalance_cards_v1";
 let balance = parseInt(localStorage.getItem(BALANCE_KEY) || "1000", 10);
 const fmt = n => new Intl.NumberFormat('ro-RO').format(n|0);
 const setBalance = (v) => {
@@ -336,489 +445,192 @@ const setBalance = (v) => {
 };
 setBalance(balance);
 
-/* Toast */
 function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
+  const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
   clearTimeout(t._h); t._h = setTimeout(()=>t.style.display='none', 1400);
 }
 
 /* =================== NAV =================== */
-const views = ['homeView','minesView','diceView','crashView','coinView','wheelView','limboView','towerView','codesView'];
+const views = ['homeView','minesView','diceView','crashView','coinView','wheelView','limboView','towerView','bjView','slotsView','plinkoView','codesView'];
 const showView = (id) => {
   views.forEach(v => document.getElementById(v).style.display = (v===id?'block':'none'));
-  document.querySelectorAll('.nav a').forEach(a=>{
-    a.classList.toggle('active', a.dataset.view===id);
-  });
+  document.querySelectorAll('.nav a').forEach(a=> a.classList.toggle('active', a.dataset.view===id));
 };
-document.querySelectorAll('[data-view]').forEach(el=>{
-  el.addEventListener('click', e=>{ e.preventDefault(); showView(el.dataset.view); });
-});
+document.querySelectorAll('[data-view]').forEach(el=> el.addEventListener('click', e=>{ e.preventDefault(); showView(el.dataset.view); }));
 
+/* ============== MINES (same logic) ============== */
 (() => {
-  // constants for fair math
-  const TILES = 25;
-  const HOUSE_EDGE = 0.03; // ~3% (same vibe as your Dice/Limbo)
-
-  // DOM refs
+  const TILES = 25, HOUSE_EDGE = 0.03;
   const m = {
-    betInp: document.getElementById('m_bet'),
-    bombsInp: document.getElementById('m_bombs'),
-    startBtn: document.getElementById('m_start'),
-    cashBtn: document.getElementById('m_cash'),
-    board: document.getElementById('m_board'),
-    multEl: document.getElementById('m_mult'),
-    winEl: document.getElementById('m_win'),
-    betStat: document.getElementById('m_betStat'),
+    betInp: document.getElementById('m_bet'), bombsInp: document.getElementById('m_bombs'),
+    startBtn: document.getElementById('m_start'), cashBtn: document.getElementById('m_cash'),
+    board: document.getElementById('m_board'), multEl: document.getElementById('m_mult'),
+    winEl: document.getElementById('m_win'), betStat: document.getElementById('m_betStat'),
     msg: document.getElementById('m_msg'),
     state: { active:false, bet:0, step:0, mult:1.00, win:0, bombs:[], bombCount:3 }
   };
-
-  // fair cumulative multiplier after `picks` safe reveals with `bombs` bombs
-  function minesMultiplier(picks, bombs){
-    if (picks <= 0) return 1.0;
-    let mult = 1 - HOUSE_EDGE; // apply edge once per run
-    for (let i = 0; i < picks; i++){
-      // chance next pick is safe at this stage = (safe remaining / tiles remaining)
-      mult *= ( (TILES - i) / (TILES - bombs - i) );
-    }
+  const multCalc = (picks, bombs)=>{
+    if (picks <= 0) return 1.0; let mult = 1 - HOUSE_EDGE;
+    for (let i = 0; i < picks; i++) mult *= ((TILES - i) / (TILES - bombs - i));
     return mult;
-  }
-
-  // probability next click is safe (for UX hint)
-  function nextSafeChance(picks, bombs){
-    return (TILES - bombs - picks) / (TILES - picks);
-  }
-
-  function resetUI(){
-    m.multEl.textContent = '1.00x';
-    m.winEl.textContent = '0';
-    m.msg.textContent = '';
-  }
-
-  function buildBoard(bombCount){
-    m.board.innerHTML = '';
-    m.state.step = 0; m.state.mult = 1.00; m.state.win = 0;
-    m.state.bombs = [];
-    resetUI();
-
-    // place bombs (unique 0..24)
-    while(m.state.bombs.length < bombCount){
-      const r = Math.floor(Math.random()*TILES);
-      if(!m.state.bombs.includes(r)) m.state.bombs.push(r);
-    }
-
+  };
+  const nextChance = (picks,bombs)=> (TILES - bombs - picks) / (TILES - picks);
+  const resetUI=()=>{ m.multEl.textContent='1.00x'; m.winEl.textContent='0'; m.msg.textContent=''; };
+  function build(bombCount){
+    m.board.innerHTML=''; m.state.step=0; m.state.mult=1; m.state.win=0; m.state.bombs=[]; resetUI();
+    while(m.state.bombs.length<bombCount){ const r=Math.floor(Math.random()*TILES); if(!m.state.bombs.includes(r)) m.state.bombs.push(r); }
     for(let i=0;i<TILES;i++){
-      const cell = document.createElement('div');
-      cell.className = 'cell';
+      const cell=document.createElement('div'); cell.className='cell';
       cell.addEventListener('click', ()=>{
         if(!m.state.active || cell.classList.contains('revealed')) return;
-
         if(m.state.bombs.includes(i)){
-          // hit bomb -> lose
-          cell.classList.add('bomb'); cell.textContent = '💣';
-          m.msg.innerHTML = 'Boom! <span class="bad">Ai pierdut pariul.</span>';
-          m.state.active = false;
-          m.cashBtn.disabled = true;
-          // reveal all bombs
-          [...m.board.children].forEach((c, idx)=>{
-            if(m.state.bombs.includes(idx) && c!==cell){
-              c.classList.add('bomb'); c.textContent='💣';
-            }
-          });
+          cell.classList.add('bomb'); cell.textContent='💣'; m.msg.innerHTML='Boom! <span class="bad">Ai pierdut pariul.</span>';
+          m.state.active=false; m.cashBtn.disabled=true;
+          [...m.board.children].forEach((c,idx)=>{ if(m.state.bombs.includes(idx)&&c!==cell){ c.classList.add('bomb'); c.textContent='💣'; }});
         }else{
-          // safe
-          cell.classList.add('revealed'); cell.textContent = '🧱';
-          m.state.step++;
-
-          // fair multiplier
-          m.state.mult = minesMultiplier(m.state.step, m.state.bombCount);
-          m.state.win  = Math.floor(m.state.bet * m.state.mult);
-
-          m.multEl.textContent = m.state.mult.toFixed(2)+'x';
-          m.winEl.textContent  = fmt(m.state.win);
-
-          const chance = nextSafeChance(m.state.step, m.state.bombCount)*100;
-          m.msg.innerHTML = `Șansă next safe: <b>${chance.toFixed(2)}%</b>`;
-
-          m.cashBtn.disabled = false;
+          cell.classList.add('revealed'); cell.textContent='🧱'; m.state.step++;
+          m.state.mult = multCalc(m.state.step, m.state.bombCount); m.state.win = Math.floor(m.state.bet*m.state.mult);
+          m.multEl.textContent = m.state.mult.toFixed(2)+'x'; m.winEl.textContent = fmt(m.state.win);
+          m.msg.innerHTML = `Șansă next safe: <b>${(nextChance(m.state.step, m.state.bombCount)*100).toFixed(2)}%</b>`;
+          m.cashBtn.disabled=false;
         }
       });
       m.board.appendChild(cell);
     }
   }
-
-  // Start
   m.startBtn.addEventListener('click', ()=>{
     const bet = Math.max(1, Math.floor(parseInt(m.betInp.value||'0',10)));
     const bombs = Math.min(24, Math.max(1, parseInt(m.bombsInp.value||'3',10)));
     if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-
     setBalance(balance - bet);
-
-    m.state.active = true;
-    m.state.bet = bet;
-    m.state.bombCount = bombs;
-    m.betStat.textContent = fmt(bet);
-    m.cashBtn.disabled = true;
-
-    buildBoard(bombs);
+    m.state.active=true; m.state.bet=bet; m.state.bombCount=bombs; m.betStat.textContent=fmt(bet);
+    m.cashBtn.disabled=true; build(bombs);
   });
-
-  // Cash Out
   m.cashBtn.addEventListener('click', ()=>{
     if(!m.state.active || m.state.win<=0) return;
-    setBalance(balance + m.state.win);
-    m.msg.innerHTML = `✅ Retras <b class="good">${fmt(m.state.win)}</b> 🪙`;
-    m.state.active = false;
-    m.cashBtn.disabled = true;
+    setBalance(balance + m.state.win); m.msg.innerHTML=`✅ Retras <b class="good">${fmt(m.state.win)}</b> 🪙`;
+    m.state.active=false; m.cashBtn.disabled=true;
   });
 })();
 
-/* ================ DICE (2 zaruri) ================ */
-// distribuția sumelor 2..12 (număr combinații din 36)
+/* ================ DICE ================ */
 const sumCombos = {2:1,3:2,4:3,5:4,6:5,7:6,8:5,9:4,10:3,11:2,12:1};
-const d = {
-  bet: document.getElementById('d_bet'),
-  target: document.getElementById('d_target'),
-  mode: document.getElementById('d_mode'),
-  rollBtn: document.getElementById('d_roll'),
-  chance: document.getElementById('d_chance'),
-  payout: document.getElementById('d_payout'),
-  faces: document.getElementById('diceFaces'),
-  result: document.getElementById('d_result')
-};
-const dieChar = n=> String.fromCodePoint(0x2680 + (n-1)); // ⚀..⚅
-
-function diceChance(mode, t){
-  let wins=0;
-  for(let s=2;s<=12;s++){
-    const hit = mode==='under' ? (s < t) : (s > t);
-    if(hit) wins += sumCombos[s];
-  }
-  return wins/36;
-}
+const d = { bet: d_bet, target: d_target, mode: d_mode, rollBtn: d_roll, chance: d_chance, payout: d_payout, facesA: dieA, facesB: dieB, result: d_result };
+const dieChar = n=> String.fromCodePoint(0x2680 + (n-1));
+function diceChance(mode, t){ let wins=0; for(let s=2;s<=12;s++){ const hit = mode==='under' ? (s < t) : (s > t); if(hit) wins += sumCombos[s]; } return wins/36; }
 function updateDiceInfo(){
   const bet = Math.max(1, parseInt(d.bet.value||'0',10));
-  const t = Math.min(11, Math.max(3, parseInt(d.target.value||'7',10)));
-  d.target.value = t;
-  const mode = d.mode.value;
-  let chance = diceChance(mode, t);
-  chance = Math.max(1/36, Math.min(35/36, chance));
-  // payout „fair” cu mic edge 3%
-  const mult = 0.97 / chance;
-  const pay = Math.floor(bet * mult);
-  d.chance.textContent = (chance*100).toFixed(2);
-  d.payout.textContent = fmt(pay);
+  const t = Math.min(11, Math.max(3, parseInt(d.target.value||'7',10))); d.target.value = t;
+  const mode = d.mode.value; let chance = diceChance(mode, t); chance = Math.max(1/36, Math.min(35/36, chance));
+  const mult = 0.97 / chance; const pay = Math.floor(bet * mult);
+  d.chance.textContent = (chance*100).toFixed(2); d.payout.textContent = fmt(pay);
 }
-['input','change'].forEach(ev=>{
-  d.bet.addEventListener(ev, updateDiceInfo);
-  d.target.addEventListener(ev, updateDiceInfo);
-  d.mode.addEventListener(ev, updateDiceInfo);
-});
+['input','change'].forEach(ev=>{ d.bet.addEventListener(ev, updateDiceInfo); d.target.addEventListener(ev, updateDiceInfo); d.mode.addEventListener(ev, updateDiceInfo); });
 updateDiceInfo();
-
 d.rollBtn.addEventListener('click', ()=>{
   const bet = Math.max(1, parseInt(d.bet.value||'0',10));
-  const t = Math.min(11, Math.max(3, parseInt(d.target.value||'7',10)));
-  const mode = d.mode.value;
+  const t = Math.min(11, Math.max(3, parseInt(d.target.value||'7',10))); const mode = d.mode.value;
   if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-  d.rollBtn.disabled = true;
-  d.result.textContent = '';
-
-  // animație scurtă
-  let k=0;
-  const anim = setInterval(()=>{
-    const a = 1+Math.floor(Math.random()*6);
-    const b = 1+Math.floor(Math.random()*6);
-    d.faces.textContent = `${dieChar(a)} ${dieChar(b)}`;
-    if(++k>12) { clearInterval(anim);
-      const da = 1+Math.floor(Math.random()*6);
-      const db = 1+Math.floor(Math.random()*6);
-      const sum = da+db;
-      d.faces.textContent = `${dieChar(da)} ${dieChar(db)}`;
-      const win = (mode==='under') ? (sum < t) : (sum > t);
-      const chance = diceChance(mode, t);
+  setBalance(balance - bet); d.rollBtn.disabled = true; d.result.textContent = '';
+  let k=0; const anim = setInterval(()=>{
+    const a = 1+Math.floor(Math.random()*6), b = 1+Math.floor(Math.random()*6);
+    d.facesA.textContent = dieChar(a); d.facesB.textContent = dieChar(b);
+    if(++k>12){ clearInterval(anim);
+      const da = 1+Math.floor(Math.random()*6), db = 1+Math.floor(Math.random()*6);
+      const sum = da+db; d.facesA.textContent = dieChar(da); d.facesB.textContent = dieChar(db);
+      const win = (mode==='under') ? (sum < t) : (sum > t); const chance = diceChance(mode,t);
       const payout = Math.floor(bet * (0.97/Math.max(1/36,Math.min(35/36, chance))));
-      if(win){
-        setBalance(balance + payout);
-        d.result.innerHTML = `✅ Sumă ${sum}. Ai câștigat <b class="good">${fmt(payout)}</b> 🪙`;
-      }else{
-        d.result.innerHTML = `❌ Sumă ${sum}. Pariu pierdut (${fmt(bet)}).`;
-      }
-      d.rollBtn.disabled = false;
-      updateDiceInfo();
+      if(win){ setBalance(balance + payout); d.result.innerHTML = `✅ Sumă ${sum}. Câștig <b class="good">${fmt(payout)}</b> 🪙`; }
+      else{ d.result.innerHTML = `❌ Sumă ${sum}. Pariu pierdut (${fmt(bet)}).`; }
+      d.rollBtn.disabled = false; updateDiceInfo();
     }
   }, 60);
 });
 
 /* ================ CRASH ================ */
-const c = {
-  bet: document.getElementById('c_bet'),
-  startBtn: document.getElementById('c_start'),
-  cashBtn: document.getElementById('c_cash'),
-  multEl: document.getElementById('crashMult'),
-  status: document.getElementById('crashStatus'),
-  bar: document.getElementById('crashBar'),
-  state: { active:false, bet:0, mult:1.00, crashAt:1.10, timer:null }
-};
-function randomCrashAt(){
-  const U = Math.random();
-  const k = 0.6;
-  const val = 1.03 + (-Math.log(Math.max(1e-6, U))) * k;
-  return Math.min(12, Math.max(1.05, val));
-}
-function crashResetUI(){
-  c.multEl.textContent = '1.00x';
-  c.status.textContent = '';
-  c.bar.style.width = '0%';
-}
+const c = { bet: c_bet, startBtn: c_start, cashBtn: c_cash, multEl: crashMult, status: crashStatus, bar: crashBar, state:{active:false,bet:0,mult:1,crashAt:1.1,timer:null} };
+function randomCrashAt(){ const U=Math.random(), k=0.6; const val=1.03 + (-Math.log(Math.max(1e-6,U))) * k; return Math.min(12, Math.max(1.05, val)); }
+function crashResetUI(){ c.multEl.textContent='1.00x'; c.status.textContent=''; c.bar.style.width='0%'; }
 c.startBtn.addEventListener('click', ()=>{
-  if(c.state.active) return;
-  const bet = Math.max(1, parseInt(c.bet.value||'0',10));
-  if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-
-  c.state.active = true;
-  c.state.bet = bet;
-  c.state.mult = 1.00;
-  c.state.crashAt = randomCrashAt();
-  c.cashBtn.disabled = false;
-  c.startBtn.disabled = true;
-  crashResetUI();
-
+  if(c.state.active) return; const bet=Math.max(1, parseInt(c.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; }
+  setBalance(balance - bet); c.state.active=true; c.state.bet=bet; c.state.mult=1; c.state.crashAt=randomCrashAt(); c.cashBtn.disabled=false; c.startBtn.disabled=true; crashResetUI();
   c.state.timer = setInterval(()=>{
     c.state.mult = (c.state.mult + (c.state.mult<2 ? 0.035 : c.state.mult<4 ? 0.06 : 0.09));
-    c.multEl.textContent = `🚀 ${c.state.mult.toFixed(2)}x`;
-    c.bar.style.width = Math.min(100, c.state.mult*8)+'%';
-
-    if(c.state.mult >= c.state.crashAt){
-      clearInterval(c.state.timer);
-      c.state.active = false;
-      c.cashBtn.disabled = true;
-      c.startBtn.disabled = false;
-      c.status.innerHTML = `💥 A crăpat la <b class="bad">${c.state.crashAt.toFixed(2)}x</b>. Pariu pierdut.`;
-    }
+    c.multEl.textContent = `🚀 ${c.state.mult.toFixed(2)}x`; c.bar.style.width = Math.min(100, c.state.mult*8)+'%';
+    if(c.state.mult >= c.state.crashAt){ clearInterval(c.state.timer); c.state.active=false; c.cashBtn.disabled=true; c.startBtn.disabled=false; c.status.innerHTML=`💥 A crăpat la <b class="bad">${c.state.crashAt.toFixed(2)}x</b>.`; }
   }, 80);
 });
 c.cashBtn.addEventListener('click', ()=>{
-  if(!c.state.active) return;
-  clearInterval(c.state.timer);
-  const win = Math.floor(c.state.bet * c.state.mult);
-  setBalance(balance + win);
-  c.status.innerHTML = `✅ Cashout la <b class="good">${c.state.mult.toFixed(2)}x</b> — câștig <b class="good">${fmt(win)}</b> 🪙`;
-  c.state.active = false;
-  c.cashBtn.disabled = true;
-  c.startBtn.disabled = false;
+  if(!c.state.active) return; clearInterval(c.state.timer);
+  const win=Math.floor(c.state.bet*c.state.mult); setBalance(balance+win);
+  c.status.innerHTML=`✅ Cashout la <b class="good">${c.state.mult.toFixed(2)}x</b> — <b class="good">${fmt(win)}</b> 🪙`;
+  c.state.active=false; c.cashBtn.disabled=true; c.startBtn.disabled=false;
 });
 
-/* ================ COINFLIP (⭐ / ❤️) ================ */
-const cf = {
-  bet: document.getElementById('cf_bet'),
-  pick: document.getElementById('cf_pick'),
-  btn: document.getElementById('cf_flip'),
-  coin: document.getElementById('coin'),
-  sym: document.getElementById('coinSymbol'),
-  msg: document.getElementById('cf_msg')
-};
+/* ================ COINFLIP ================ */
+const cf = { bet: cf_bet, pick: cf_pick, btn: cf_flip, coin: coin, sym: coinSymbol, msg: cf_msg };
 cf.btn.addEventListener('click', ()=>{
-  const bet = Math.max(1, parseInt(cf.bet.value||'0',10));
-  if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-  cf.btn.disabled = true; cf.msg.textContent = '';
-  cf.coin.classList.add('flip');
+  const bet = Math.max(1, parseInt(cf.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; }
+  setBalance(balance - bet); cf.btn.disabled=true; cf.msg.textContent=''; cf.coin.classList.add('flip');
   setTimeout(()=>{
-    cf.coin.classList.remove('flip');
-    const res = (Math.random()<0.5)?'star':'heart';
-    cf.sym.textContent = (res==='star'?'⭐':'❤️');
-    cf.sym.className = res==='star'?'star':'heart';
-    const win = (res === cf.pick.value);
-    if(win){
-      const payout = Math.floor(bet * 1.98);
-      setBalance(balance + payout);
-      cf.msg.innerHTML = `✅ ${res==='star'?'⭐':'❤️'} — câștig <b class="good">${fmt(payout)}</b> 🪙`;
-    }else{
-      cf.msg.innerHTML = `❌ Ai pierdut pariul (${fmt(bet)}).`;
-    }
-    cf.btn.disabled = false;
+    cf.coin.classList.remove('flip'); const res=(Math.random()<0.5)?'star':'heart'; cf.sym.textContent = (res==='star'?'⭐':'❤️'); cf.sym.className = res==='star'?'star':'heart';
+    if(res===cf.pick.value){ const payout=Math.floor(bet*1.98); setBalance(balance+payout); cf.msg.innerHTML=`✅ Câștig <b class="good">${fmt(payout)}</b> 🪙`; }
+    else{ cf.msg.innerHTML=`❌ Pierdut (${fmt(bet)}).`; } cf.btn.disabled=false;
   }, 900);
 });
 
-/* ================ WHEEL / ROULETTE (canvas) ================ */
-const wh = {
-  bet: document.getElementById('wh_bet'),
-  pick: document.getElementById('wh_pick'),
-  btn: document.getElementById('wh_spin'),
-  msg: document.getElementById('wh_msg'),
-  canvas: document.getElementById('wheelCanvas')
-};
-// segmente: 24 red, 24 blue, 2 green (total 50)
-const wheelSegs = [...Array(24).fill('red'), ...Array(24).fill('blue'), 'green', 'green'];
-const ctx = wh.canvas.getContext('2d');
-let wheelAngle = 0;
-
+/* ================ WHEEL ================ */
+const wh = { bet: wh_bet, pick: wh_pick, btn: wh_spin, msg: wh_msg, canvas: wheelCanvas };
+const wheelSegs = [...Array(24).fill('red'), ...Array(24).fill('blue'), 'green', 'green']; const ctx = wh.canvas.getContext('2d'); let wheelAngle=0;
 function drawWheel(angle=0){
-  const cw = wh.canvas.width, ch = wh.canvas.height;
-  const cx = cw/2, cy = ch/2, r = Math.min(cx,cy)-10;
-  ctx.clearRect(0,0,cw,ch);
-  const slice = (Math.PI*2)/wheelSegs.length;
+  const cw=wh.canvas.width, ch=wh.canvas.height; const cx=cw/2, cy=ch/2, r=Math.min(cx,cy)-10; ctx.clearRect(0,0,cw,ch);
+  const slice=(Math.PI*2)/wheelSegs.length;
   for(let i=0;i<wheelSegs.length;i++){
-    const start = angle + i*slice, end = start + slice;
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,start,end);
+    const start=angle+i*slice, end=start+slice; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end);
     const col = wheelSegs[i]==='red' ? '#ff6b6b' : wheelSegs[i]==='blue' ? '#72f5ff' : '#7aff9a';
-    const col2 = wheelSegs[i]==='red' ? '#b94b4b' : wheelSegs[i]==='blue' ? '#3bcfff' : '#35d785';
-    const grd = ctx.createLinearGradient(cx,cy-r,cx,cy+r);
-    grd.addColorStop(0,col);
-    grd.addColorStop(1,col2);
-    ctx.fillStyle = grd;
-    ctx.fill();
-    ctx.strokeStyle = '#0f1638';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    const col2= wheelSegs[i]==='red' ? '#b94b4b' : wheelSegs[i]==='blue' ? '#3bcfff' : '#35d785';
+    const grd=ctx.createLinearGradient(cx,cy-r,cx,cy+r); grd.addColorStop(0,col); grd.addColorStop(1,col2); ctx.fillStyle=grd; ctx.fill();
+    ctx.strokeStyle='#0f1638'; ctx.lineWidth=2; ctx.stroke();
   }
-  // centru
-  ctx.beginPath();
-  ctx.arc(cx,cy,40,0,Math.PI*2);
-  ctx.fillStyle = '#0f1739';
-  ctx.fill();
-  ctx.strokeStyle = '#18225a';
-  ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,40,0,Math.PI*2); ctx.fillStyle='#0f1739'; ctx.fill(); ctx.strokeStyle='#18225a'; ctx.stroke();
 }
 drawWheel(wheelAngle);
-
 wh.btn.addEventListener('click', ()=>{
-  const bet = Math.max(1, parseInt(wh.bet.value||'0',10));
-  if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-  wh.btn.disabled = true; wh.msg.textContent = '';
-
-  const slice = (Math.PI*2)/wheelSegs.length;
-  // alege un index câștigător random
-  const idx = Math.floor(Math.random()*wheelSegs.length);
-  // țintă: pointerul e sus (unghi  -Math.PI/2). vrem ca mijlocul sectorului să ajungă acolo.
-  const targetAngle = -Math.PI/2 - (idx*slice + slice/2);
-  // adăugăm câteva ture + easing
-  const spins = 6 + Math.random()*2;
-  const endAngle = targetAngle + spins*2*Math.PI;
-
-  let start=null;
-  function anim(t){
-    if(!start) start = t;
-    const p = Math.min(1, (t-start)/2000); // 2 sec
-    // easeOutCubic
-    const eased = 1 - Math.pow(1-p,3);
-    wheelAngle = (1-eased)*wheelAngle + eased*endAngle;
-    drawWheel(wheelAngle);
-    if(p<1) requestAnimationFrame(anim);
-    else {
-      const res = wheelSegs[idx];
-      let payout=0, win=false;
-      if(res===wh.pick.value){
-        win = true;
-        payout = Math.floor(bet * (res==='green' ? 14 : 2));
-        setBalance(balance + payout);
-        wh.msg.innerHTML = `✅ ${res.toUpperCase()} — câștig <b class="good">${fmt(payout)}</b> 🪙`;
-      }else{
-        wh.msg.innerHTML = `❌ A ieșit ${res.toUpperCase()}. Pariu pierdut (${fmt(bet)}).`;
-      }
-      wh.btn.disabled = false;
-    }
-  }
+  const bet=Math.max(1, parseInt(wh.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; }
+  setBalance(balance - bet); wh.btn.disabled=true; wh.msg.textContent='';
+  const slice=(Math.PI*2)/wheelSegs.length; const idx=Math.floor(Math.random()*wheelSegs.length);
+  const targetAngle=-Math.PI/2 - (idx*slice + slice/2); const spins=6 + Math.random()*2; const endAngle=targetAngle + spins*2*Math.PI;
+  let start=null; function anim(t){ if(!start) start=t; const p=Math.min(1,(t-start)/2000); const eased=1 - Math.pow(1-p,3); wheelAngle=(1-eased)*wheelAngle + eased*endAngle; drawWheel(wheelAngle);
+    if(p<1) requestAnimationFrame(anim); else { const res=wheelSegs[idx]; if(res===wh.pick.value){ const payout=Math.floor(bet*(res==='green'?14:2)); setBalance(balance+payout); wh.msg.innerHTML=`✅ ${res.toUpperCase()} — <b class="good">${fmt(payout)}</b> 🪙`; } else { wh.msg.innerHTML=`❌ A ieșit ${res.toUpperCase()}.`; } wh.btn.disabled=false; } }
   requestAnimationFrame(anim);
 });
 
 /* ================ LIMBO ================ */
-const lb = {
-  bet: document.getElementById('lb_bet'),
-  target: document.getElementById('lb_target'),
-  btn: document.getElementById('lb_go'),
-  payout: document.getElementById('lb_payout'),
-  roll: document.getElementById('lb_roll'),
-  msg: document.getElementById('lb_msg')
-};
-function updLimbo(){
-  const bet = Math.max(1, parseInt(lb.bet.value||'0',10));
-  let t = Math.max(1.10, Math.min(10.0, parseFloat(lb.target.value||'2')));
-  lb.target.value = t.toFixed(2);
-  lb.payout.textContent = fmt(Math.floor(bet * (0.97 * t)));
-}
-['input','change'].forEach(ev=>{
-  lb.bet.addEventListener(ev, updLimbo);
-  lb.target.addEventListener(ev, updLimbo);
-});
-updLimbo();
+const lb = { bet: lb_bet, target: lb_target, btn: lb_go, payout: lb_payout, roll: lb_roll, msg: lb_msg };
+function updLimbo(){ const bet=Math.max(1, parseInt(lb.bet.value||'0',10)); let t=Math.max(1.10, Math.min(10.0, parseFloat(lb.target.value||'2'))); lb.target.value=t.toFixed(2); lb.payout.textContent=fmt(Math.floor(bet*(0.97*t))); }
+['input','change'].forEach(ev=>{ lb.bet.addEventListener(ev, updLimbo); lb.target.addEventListener(ev, updLimbo); }); updLimbo();
 lb.btn.addEventListener('click', ()=>{
-  const bet = Math.max(1, parseInt(lb.bet.value||'0',10));
-  let t = Math.max(1.10, Math.min(10.0, parseFloat(lb.target.value||'2')));
-  if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-  lb.btn.disabled = true; lb.msg.textContent = '';
-  const U = Math.max(1e-6, Math.random());
-  const result = Math.min(20, 1 / U);
-  lb.roll.textContent = result.toFixed(2)+'×';
-  if(result >= t){
-    const payout = Math.floor(bet * (0.97 * t));
-    setBalance(balance + payout);
-    lb.msg.innerHTML = `✅ Hit! Cash <b class="good">${fmt(payout)}</b> 🪙`;
-  }else{
-    lb.msg.innerHTML = `❌ Miss. Ținta era ${t.toFixed(2)}×.`;
-  }
-  lb.btn.disabled = false;
-  updLimbo();
+  const bet=Math.max(1, parseInt(lb.bet.value||'0',10)); let t=Math.max(1.10, Math.min(10.0, parseFloat(lb.target.value||'2')));
+  if(bet>balance){ alert('Fonduri insuficiente.'); return; } setBalance(balance - bet); lb.btn.disabled=true; lb.msg.textContent='';
+  const U=Math.max(1e-6, Math.random()); const result=Math.min(20, 1/U); lb.roll.textContent=result.toFixed(2)+'×';
+  if(result>=t){ const payout=Math.floor(bet*(0.97*t)); setBalance(balance+payout); lb.msg.innerHTML=`✅ Hit! <b class="good">${fmt(payout)}</b> 🪙`; } else { lb.msg.innerHTML=`❌ Miss. Ținta era ${t.toFixed(2)}×.`; }
+  lb.btn.disabled=false; updLimbo();
 });
 
-/* ================ TOWER (BUGFIXED) ================ */
-const tw = {
-  bet: document.getElementById('tw_bet'),
-  start: document.getElementById('tw_start'),
-  cash: document.getElementById('tw_cash'),
-  board: document.getElementById('tw_board'),
-  lvlEl: document.getElementById('tw_level'),
-  multEl: document.getElementById('tw_mult'),
-  winEl: document.getElementById('tw_win'),
-  msg: document.getElementById('tw_msg'),
-  state: { active:false, bet:0, level:0, bombs:[], win:0, mult:1.00 }
-};
+/* ================ TOWER ================ */
+const tw = { bet: tw_bet, start: tw_start, cash: tw_cash, board: tw_board, lvlEl: tw_level, multEl: tw_mult, winEl: tw_win, msg: tw_msg, state:{active:false,bet:0,level:0,bombs:[],win:0,mult:1} };
 function twBuild(){
-  tw.board.innerHTML = '';
-  tw.state.bombs = [];
+  tw.board.innerHTML=''; tw.state.bombs=[];
   for(let i=0;i<8;i++){
-    const row = document.createElement('div');
-    row.className='towerRow';
-    // bomb index
-    const bIdx = Math.floor(Math.random()*3);
-    tw.state.bombs.push(bIdx);
-    for(let j=0;j<3;j++){
-      const b = document.createElement('div');
-      b.className='tw';
-      b.textContent='🧱';
+    const row=document.createElement('div'); row.className='towerRow'; const bIdx=Math.floor(Math.random()*3); tw.state.bombs.push(bIdx);
+    for(let j=0;j<3;j++){ const b=document.createElement('div'); b.className='tw'; b.textContent='🧱';
       ((lvl, idx, el)=>{
         el.addEventListener('click', ()=>{
           if(!tw.state.active || lvl!==tw.state.level) return;
-          if(tw.state.bombs[lvl] === idx){
-            el.classList.add('bmb'); el.textContent='💣';
-            tw.msg.innerHTML = 'Boom! <span class="bad">Pariu pierdut.</span>';
-            tw.state.active=false; tw.cash.disabled = true;
-            // dezvăluie cele safe
-            [...row.children].forEach((x,k)=>{ if(k!==idx){ x.classList.add('safe'); x.textContent='✔️'; }});
-          }else{
-            el.classList.add('safe'); el.textContent='✔️';
-            tw.state.level++;
-            tw.state.mult = 1 + tw.state.level*0.15;
-            tw.state.win = Math.floor(tw.state.bet * tw.state.mult);
-            tw.lvlEl.textContent = `${tw.state.level}/8`;
-            tw.multEl.textContent = tw.state.mult.toFixed(2)+'×';
-            tw.winEl.textContent = fmt(tw.state.win);
-            tw.cash.disabled = false;
-            if(tw.state.level===8){
-              tw.msg.innerHTML = `🏆 Max level! Retrage <b class="good">${fmt(tw.state.win)}</b> 🪙`;
-              tw.state.active=false; // poți încă să dai cash
-              tw.cash.disabled = false;
-            }
+          if(tw.state.bombs[lvl] === idx){ el.classList.add('bmb'); el.textContent='💣'; tw.msg.innerHTML='Boom! <span class="bad">Pariu pierdut.</span>'; tw.state.active=false; tw.cash.disabled=true; [...row.children].forEach((x,k)=>{ if(k!==idx){ x.classList.add('safe'); x.textContent='✔️'; }}); }
+          else{ el.classList.add('safe'); el.textContent='✔️'; tw.state.level++; tw.state.mult=1 + tw.state.level*0.15; tw.state.win=Math.floor(tw.state.bet*tw.state.mult);
+            tw.lvlEl.textContent=`${tw.state.level}/8`; tw.multEl.textContent=tw.state.mult.toFixed(2)+'×'; tw.winEl.textContent=fmt(tw.state.win); tw.cash.disabled=false;
+            if(tw.state.level===8){ tw.msg.innerHTML=`🏆 Max level! Retrage <b class="good">${fmt(tw.state.win)}</b> 🪙`; tw.state.active=false; tw.cash.disabled=false; }
           }
         });
       })(i,j,b);
@@ -826,81 +638,108 @@ function twBuild(){
     }
     tw.board.appendChild(row);
   }
-  tw.lvlEl.textContent = '0/8';
-  tw.multEl.textContent = '1.00×';
-  tw.winEl.textContent = '0';
-  tw.msg.textContent = '';
+  tw.lvlEl.textContent='0/8'; tw.multEl.textContent='1.00×'; tw.winEl.textContent='0'; tw.msg.textContent='';
 }
 tw.start.addEventListener('click', ()=>{
-  const bet = Math.max(1, parseInt(tw.bet.value||'0',10));
-  if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-  tw.state = { active:true, bet, level:0, bombs:[], win:0, mult:1.00 };
-  tw.cash.disabled = true;
-  twBuild();
+  const bet=Math.max(1, parseInt(tw.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; } setBalance(balance - bet);
+  tw.state={active:true,bet,level:0,bombs:[],win:0,mult:1}; tw.cash.disabled=true; twBuild();
 });
-tw.cash.addEventListener('click', ()=>{
-  if(tw.state.win<=0) return; // poți retrage și dacă run-ul s-a terminat la max level
-  setBalance(balance + tw.state.win);
-  tw.msg.innerHTML = `✅ Retras <b class="good">${fmt(tw.state.win)}</b> 🪙`;
-  tw.state.active = false;
-  tw.cash.disabled = true;
+tw.cash.addEventListener('click', ()=>{ if(tw.state.win<=0) return; setBalance(balance+tw.state.win); tw.msg.innerHTML=`✅ Retras <b class="good">${fmt(tw.state.win)}</b> 🪙`; tw.state.active=false; tw.cash.disabled=true; });
+
+/* ============== BLACKJACK with card UI ============= */
+const bj = { bet: bj_bet, deal: bj_deal, hit: bj_hit, stand: bj_stand, pPile: bj_pile, dPile: bj_dpile, pTot: bj_pt, dTot: bj_dt, status: bj_status, state:{deck:[], p:[], d:[], active:false, bet:0} };
+const suits = ['♠','♥','♦','♣']; const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+function newDeck(){ const deck=[]; for(const s of suits) for(const r of ranks) deck.push(r+s); for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } return deck; }
+function score(hand){ let total=0, aces=0; for(const c of hand){ const r=c.slice(0,-1); if(r==='A'){ total+=11; aces++; } else if(['J','Q','K'].includes(r)) total+=10; else total+=parseInt(r,10); } while(total>21 && aces>0){ total-=10; aces--; } return total; }
+function cardEl(card, hidden=false){
+  const el=document.createElement('div'); el.className='pc'+(hidden?' back':'');
+  if(!hidden){
+    const suit=card.slice(-1), rank=card.slice(0,-1);
+    const red = (suit==='♥' || suit==='♦'); if(red) el.classList.add('red'); else el.classList.add('black');
+    const center=document.createElement('div'); center.textContent=suit; el.appendChild(center);
+    const c1=document.createElement('div'); c1.className='corner'; c1.innerHTML = rank+'<br>'+suit; el.appendChild(c1);
+    const c2=document.createElement('div'); c2.className='corner bottom'; c2.innerHTML = rank+'<br>'+suit; el.appendChild(c2);
+  }
+  return el;
+}
+function renderBJ(){
+  bj.pPile.innerHTML=''; bj.dPile.innerHTML='';
+  bj.state.p.forEach(c=> bj.pPile.appendChild(cardEl(c)));
+  if(bj.state.active){ // dealer first card up, second hidden
+    bj.dPile.appendChild(cardEl(bj.state.d[0]));
+    const hidden = cardEl('??', true); bj.dPile.appendChild(hidden);
+    for(let i=2;i<bj.state.d.length;i++) bj.dPile.appendChild(cardEl(bj.state.d[i]));
+  }else{ bj.state.d.forEach(c=> bj.dPile.appendChild(cardEl(c))); }
+  bj.pTot.textContent=score(bj.state.p); bj.dTot.textContent = bj.state.active ? '??' : score(bj.state.d);
+}
+function endBJ(message, type='lose'){ // type: 'win'|'push'|'bj'|'lose'
+  bj.state.active=false; renderBJ(); bj.status.innerHTML=message;
+  let payout=0; if(type==='bj') payout=Math.floor(bj.state.bet*2.5); else if(type==='win') payout=bj.state.bet*2; else if(type==='push') payout=bj.state.bet;
+  if(payout>0) setBalance(balance+payout); bj.hit.disabled=true; bj.stand.disabled=true;
+}
+bj.deal.addEventListener('click', ()=>{
+  const bet=Math.max(1, parseInt(bj.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; } setBalance(balance-bet);
+  bj.state={deck:newDeck(), p:[], d:[], active:true, bet}; bj.status.textContent='Good luck!';
+  bj.state.p.push(bj.state.deck.pop(), bj.state.deck.pop()); bj.state.d.push(bj.state.deck.pop(), bj.state.deck.pop()); renderBJ();
+  bj.hit.disabled = bj.stand.disabled = false;
+  const p=score(bj.state.p), d=score(bj.state.d); if(p===21){ if(d===21) endBJ('Push (amândoi Blackjack).','push'); else endBJ('Blackjack! 🖤 plătește 2.5×','bj'); }
+});
+bj.hit.addEventListener('click', ()=>{ if(!bj.state.active) return; bj.state.p.push(bj.state.deck.pop()); renderBJ(); if(score(bj.state.p)>21) endBJ('Bust! ❌ peste 21.','lose'); });
+bj.stand.addEventListener('click', ()=>{
+  if(!bj.state.active) return; while(score(bj.state.d)<17) bj.state.d.push(bj.state.deck.pop());
+  const p=score(bj.state.p), d=score(bj.state.d);
+  if(d>21) endBJ('Dealer bust. ✅ Ai câștigat 2×','win'); else if(p>d) endBJ('✅ Ai câștigat 2×','win'); else if(p<d) endBJ('❌ Dealer a câștigat.','lose'); else endBJ('Push. ți-am returnat pariul.','push');
 });
 
-/* ================ CODES (TAB) ================ */
-const VALID_CODES = {
-  "makeitrain": 250,
-  "delta": 100,
-  "gobuxi777": 777,
-  "konami": 10000,
-  "andrei": 2000,
-  "picu": 1650,
-  "luca": 2350,
-  "picuuu": 10000.
-};
+/* ============== SLOTS prettier ============== */
+const sl = { bet: sl_bet, spin: sl_spin, r1: sl_r1, r2: sl_r2, r3: sl_r3, msg: sl_msg };
+const symbols = ['🍒','🍋','⭐','🔔','7️⃣'];
+const randSym=()=> symbols[Math.floor(Math.random()*symbols.length)];
+function payoutSlots(a,b,c,bet){ if(a===b&&b===c){ if(a==='7️⃣') return Math.floor(bet*15); if(a==='🔔') return Math.floor(bet*8); if(a==='⭐') return Math.floor(bet*6); return Math.floor(bet*4);} if(a===b||a===c||b===c) return Math.floor(bet*1.5); return 0; }
+sl.spin.addEventListener('click', ()=>{
+  const bet=Math.max(1, parseInt(sl.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; }
+  setBalance(balance-bet); sl.spin.disabled=true; sl.msg.textContent='';
+  let t=0; const anim=setInterval(()=>{
+    sl.r1.textContent=randSym(); sl.r2.textContent=randSym(); sl.r3.textContent=randSym();
+    sl.r1.style.transform=`translateY(${(t%2?2:-2)}px)`; sl.r2.style.transform=`translateY(${(t%2?-2:2)}px)`; sl.r3.style.transform=`translateY(${(t%2?2:-2)}px)`;
+    if(++t>18){ clearInterval(anim); sl.r1.style.transform=sl.r2.style.transform=sl.r3.style.transform='';
+      const a=randSym(), b=randSym(), c=randSym(); sl.r1.textContent=a; sl.r2.textContent=b; sl.r3.textContent=c;
+      const win=payoutSlots(a,b,c,bet);
+      if(win>0){ setBalance(balance+win); sl.msg.innerHTML=`✅ ${a}${b}${c} — <b class="good">${fmt(win)}</b> 🪙`; }
+      else{ sl.msg.innerHTML=`❌ Nimic. Pariu pierdut (${fmt(bet)}).`; }
+      sl.spin.disabled=false;
+    }
+  },60);
+});
+
+/* ============== PLINKO board paint ============== */
+const pl = { bet: pl_bet, drop: pl_drop, slot: pl_slot, mult: pl_mult, board: pl_board, msg: pl_msg };
+const plMultipliers=[0.3,0.7,1.0,1.4,2.5,1.4,1.0,0.7,0.3];
+function drawBoard(r,c){ pl.board.innerHTML=''; for(let i=0;i<8;i++){ for(let j=0;j<9;j++){ const d=document.createElement('div'); d.className='cellp'+(i===r&&j===c?' active':''); pl.board.appendChild(d);} } }
+pl.drop.addEventListener('click', ()=>{
+  const bet=Math.max(1, parseInt(pl.bet.value||'0',10)); if(bet>balance){ alert('Fonduri insuficiente.'); return; } setBalance(balance-bet);
+  pl.drop.disabled=true; pl.msg.textContent=''; let col=4; const steps=[]; for(let r=0;r<8;r++){ const dir=(Math.random()<0.5?-1:1); if(col<=0) col=1; else if(col>=8) col=7; col+=dir; steps.push({r,c:col}); }
+  let i=0; const anim=setInterval(()=>{ const s=steps[i]; drawBoard(s.r,s.c); if(++i>=steps.length){ clearInterval(anim); const landing=steps[steps.length-1].c; const mult=plMultipliers[landing];
+      pl.slot.textContent=landing; pl.mult.textContent=mult.toFixed(2)+'×'; const win=Math.floor(bet*mult);
+      if(win>0){ setBalance(balance+win); pl.msg.innerHTML=win>=bet?`✅ Slot ${landing} — <b class="good">${fmt(win)}</b> 🪙`:`ℹ️ Slot ${landing}. Înapoi <b>${fmt(win)}</b> 🪙`; }
+      else{ pl.msg.innerHTML=`❌ Slot ${landing}. Pariu pierdut (${fmt(bet)}).`; } pl.drop.disabled=false;
+  } },150);
+});
+
+/* ================ CODES ================ */
+const VALID_CODES = {"makeitrain":250,"delta":100,"gobuxi777":777,"konami":10000,"andrei":2000,"picu":1650,"luca":2350,"picuuu":10000};
 const REDEEMED_KEY = "gobuxiRedeemed_v1";
 let redeemed = JSON.parse(localStorage.getItem(REDEEMED_KEY) || "[]");
-
-const codeInput = document.getElementById('codeInput');
-const codeRedeem = document.getElementById('codeRedeem');
-const codeMsg = document.getElementById('codeMsg');
-const codeHistory = document.getElementById('codeHistory');
-
-function saveRedeemed(){
-  localStorage.setItem(REDEEMED_KEY, JSON.stringify(redeemed));
-  renderHistory();
-}
-function renderHistory(){
-  codeHistory.innerHTML = redeemed.map(c=>{
-    const amt = VALID_CODES[c] ?? 0;
-    return `<li><code>${c}</code> — ${amt ? '+'+fmt(amt)+' 🪙' : 'necunoscut'}</li>`;
-  }).join('');
-}
+function saveRedeemed(){ localStorage.setItem(REDEEMED_KEY, JSON.stringify(redeemed)); renderHistory(); }
+function renderHistory(){ codeHistory.innerHTML = redeemed.map(c=>{ const amt=VALID_CODES[c]??0; return `<li><code>${c}</code> — ${amt? '+'+fmt(amt)+' 🪙':'necunoscut'}</li>`; }).join(''); }
 renderHistory();
-
 codeRedeem.addEventListener('click', ()=>{
-  const raw = (codeInput.value || '').trim().toLowerCase();
-  if(!raw){ codeMsg.textContent = 'Introdu un cod.'; return; }
-  if(redeemed.includes(raw)){
-    codeMsg.textContent = 'Cod deja utilizat pe acest device.';
-    return;
-  }
-  const amount = VALID_CODES[raw];
-  if(!amount){
-    codeMsg.textContent = 'Cod invalid.';
-    return;
-  }
-  redeemed.push(raw);
-  saveRedeemed();
-  setBalance(balance + amount);
-  toast(`+${fmt(amount)} Gobuxi ✅`);
-  codeMsg.textContent = 'Cod activat cu succes!';
-  codeInput.value = '';
+  const raw=(codeInput.value||'').trim().toLowerCase(); if(!raw){ codeMsg.textContent='Introdu un cod.'; return; } if(redeemed.includes(raw)){ codeMsg.textContent='Cod deja utilizat pe acest device.'; return; }
+  const amount=VALID_CODES[raw]; if(!amount){ codeMsg.textContent='Cod invalid.'; return; }
+  redeemed.push(raw); saveRedeemed(); setBalance(balance+amount); toast(`+${fmt(amount)} Gobuxi ✅`); codeMsg.textContent='Cod activat cu succes!'; codeInput.value='';
 });
 
-/* default view */
 showView('homeView');
 </script>
 </body>
 </html>
-
