@@ -356,73 +356,125 @@ document.querySelectorAll('[data-view]').forEach(el=>{
   el.addEventListener('click', e=>{ e.preventDefault(); showView(el.dataset.view); });
 });
 
-/* ================ MINES ================ */
-const m = {
-  betInp: document.getElementById('m_bet'),
-  bombsInp: document.getElementById('m_bombs'),
-  startBtn: document.getElementById('m_start'),
-  cashBtn: document.getElementById('m_cash'),
-  board: document.getElementById('m_board'),
-  multEl: document.getElementById('m_mult'),
-  winEl: document.getElementById('m_win'),
-  betStat: document.getElementById('m_betStat'),
-  msg: document.getElementById('m_msg'),
-  state: { active:false, bet:0, step:0, mult:1.00, win:0, bombs:[] }
-};
+(() => {
+  // constants for fair math
+  const TILES = 25;
+  const HOUSE_EDGE = 0.03; // ~3% (same vibe as your Dice/Limbo)
 
-function minesResetBoard(bombCount){
-  m.board.innerHTML = '';
-  m.state.step = 0; m.state.mult = 1.00; m.state.win = 0;
-  m.multEl.textContent = '1.00x';
-  m.winEl.textContent = '0';
-  m.msg.textContent = '';
-  m.state.bombs = [];
-  while(m.state.bombs.length < bombCount){
-    const r = Math.floor(Math.random()*25);
-    if(!m.state.bombs.includes(r)) m.state.bombs.push(r);
+  // DOM refs
+  const m = {
+    betInp: document.getElementById('m_bet'),
+    bombsInp: document.getElementById('m_bombs'),
+    startBtn: document.getElementById('m_start'),
+    cashBtn: document.getElementById('m_cash'),
+    board: document.getElementById('m_board'),
+    multEl: document.getElementById('m_mult'),
+    winEl: document.getElementById('m_win'),
+    betStat: document.getElementById('m_betStat'),
+    msg: document.getElementById('m_msg'),
+    state: { active:false, bet:0, step:0, mult:1.00, win:0, bombs:[], bombCount:3 }
+  };
+
+  // fair cumulative multiplier after `picks` safe reveals with `bombs` bombs
+  function minesMultiplier(picks, bombs){
+    if (picks <= 0) return 1.0;
+    let mult = 1 - HOUSE_EDGE; // apply edge once per run
+    for (let i = 0; i < picks; i++){
+      // chance next pick is safe at this stage = (safe remaining / tiles remaining)
+      mult *= ( (TILES - i) / (TILES - bombs - i) );
+    }
+    return mult;
   }
-  for(let i=0;i<25;i++){
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.addEventListener('click', ()=>{
-      if(!m.state.active || cell.classList.contains('revealed')) return;
-      if(m.state.bombs.includes(i)){
-        cell.classList.add('bomb'); cell.textContent = '💣';
-        m.msg.innerHTML = 'Boom! <span class="bad">Ai pierdut pariul.</span>';
-        m.state.active = false;
-        m.cashBtn.disabled = true;
-        [...m.board.children].forEach((c, idx)=>{
-          if(m.state.bombs.includes(idx) && c!==cell){ c.classList.add('bomb'); c.textContent='💣'; }
-        });
-      }else{
-        m.state.step++;
-        m.state.mult = (1 + m.state.step*0.11);
-        m.state.win = Math.floor(m.state.bet * m.state.mult);
-        cell.classList.add('revealed'); cell.textContent = '🧱';
-        m.multEl.textContent = m.state.mult.toFixed(2)+'x';
-        m.winEl.textContent = fmt(m.state.win);
-        m.cashBtn.disabled = false;
-      }
-    });
-    m.board.appendChild(cell);
+
+  // probability next click is safe (for UX hint)
+  function nextSafeChance(picks, bombs){
+    return (TILES - bombs - picks) / (TILES - picks);
   }
-}
-m.startBtn.addEventListener('click', ()=>{
-  const bet = Math.max(1, Math.floor(parseInt(m.betInp.value||'0',10)));
-  const bombs = Math.min(24, Math.max(1, parseInt(m.bombsInp.value||'3',10)));
-  if(bet>balance){ alert('Fonduri insuficiente.'); return; }
-  setBalance(balance - bet);
-  m.state.active = true; m.state.bet = bet; m.betStat.textContent = fmt(bet);
-  m.cashBtn.disabled = true;
-  minesResetBoard(bombs);
-});
-m.cashBtn.addEventListener('click', ()=>{
-  if(!m.state.active || m.state.win<=0) return;
-  setBalance(balance + m.state.win);
-  m.msg.innerHTML = `✅ Retras <b class="good">${fmt(m.state.win)}</b> 🪙`;
-  m.state.active = false;
-  m.cashBtn.disabled = true;
-});
+
+  function resetUI(){
+    m.multEl.textContent = '1.00x';
+    m.winEl.textContent = '0';
+    m.msg.textContent = '';
+  }
+
+  function buildBoard(bombCount){
+    m.board.innerHTML = '';
+    m.state.step = 0; m.state.mult = 1.00; m.state.win = 0;
+    m.state.bombs = [];
+    resetUI();
+
+    // place bombs (unique 0..24)
+    while(m.state.bombs.length < bombCount){
+      const r = Math.floor(Math.random()*TILES);
+      if(!m.state.bombs.includes(r)) m.state.bombs.push(r);
+    }
+
+    for(let i=0;i<TILES;i++){
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.addEventListener('click', ()=>{
+        if(!m.state.active || cell.classList.contains('revealed')) return;
+
+        if(m.state.bombs.includes(i)){
+          // hit bomb -> lose
+          cell.classList.add('bomb'); cell.textContent = '💣';
+          m.msg.innerHTML = 'Boom! <span class="bad">Ai pierdut pariul.</span>';
+          m.state.active = false;
+          m.cashBtn.disabled = true;
+          // reveal all bombs
+          [...m.board.children].forEach((c, idx)=>{
+            if(m.state.bombs.includes(idx) && c!==cell){
+              c.classList.add('bomb'); c.textContent='💣';
+            }
+          });
+        }else{
+          // safe
+          cell.classList.add('revealed'); cell.textContent = '🧱';
+          m.state.step++;
+
+          // fair multiplier
+          m.state.mult = minesMultiplier(m.state.step, m.state.bombCount);
+          m.state.win  = Math.floor(m.state.bet * m.state.mult);
+
+          m.multEl.textContent = m.state.mult.toFixed(2)+'x';
+          m.winEl.textContent  = fmt(m.state.win);
+
+          const chance = nextSafeChance(m.state.step, m.state.bombCount)*100;
+          m.msg.innerHTML = `Șansă next safe: <b>${chance.toFixed(2)}%</b>`;
+
+          m.cashBtn.disabled = false;
+        }
+      });
+      m.board.appendChild(cell);
+    }
+  }
+
+  // Start
+  m.startBtn.addEventListener('click', ()=>{
+    const bet = Math.max(1, Math.floor(parseInt(m.betInp.value||'0',10)));
+    const bombs = Math.min(24, Math.max(1, parseInt(m.bombsInp.value||'3',10)));
+    if(bet>balance){ alert('Fonduri insuficiente.'); return; }
+
+    setBalance(balance - bet);
+
+    m.state.active = true;
+    m.state.bet = bet;
+    m.state.bombCount = bombs;
+    m.betStat.textContent = fmt(bet);
+    m.cashBtn.disabled = true;
+
+    buildBoard(bombs);
+  });
+
+  // Cash Out
+  m.cashBtn.addEventListener('click', ()=>{
+    if(!m.state.active || m.state.win<=0) return;
+    setBalance(balance + m.state.win);
+    m.msg.innerHTML = `✅ Retras <b class="good">${fmt(m.state.win)}</b> 🪙`;
+    m.state.active = false;
+    m.cashBtn.disabled = true;
+  });
+})();
 
 /* ================ DICE (2 zaruri) ================ */
 // distribuția sumelor 2..12 (număr combinații din 36)
